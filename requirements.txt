@@ -1,0 +1,2 @@
+black[d]==25.1.0
+pre-commit==4.2.0
