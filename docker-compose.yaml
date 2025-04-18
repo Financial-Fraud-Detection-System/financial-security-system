@@ -71,7 +71,24 @@ services:
     volumes:
       - neo4j_data:/data
 
+  clickhouse:
+    image: clickhouse:25.3
+    container_name: financial-security-system-clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: password
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
 volumes:
   superset_db_data:
   superset_home:
   neo4j_data:
+  clickhouse_data:
