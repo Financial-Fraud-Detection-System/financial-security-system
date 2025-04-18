@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Install required Python packages
-RUN pip install --no-cache-dir pillow psycopg2
+RUN pip install --no-cache-dir pillow psycopg2 clickhouse-connect
 
 # Copy init script
 COPY ./superset-init.sh /superset-init.sh
