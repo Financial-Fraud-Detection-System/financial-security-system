@@ -96,7 +96,7 @@ class KafkaClient:
         self,
         topic: str,
         group_id: str,
-        on_message: Callable[[str, object], None],
+        on_message: Callable[[str, dict], None],
         key_deserializer=lambda k: k.decode("utf-8"),
         value_deserializer=lambda v: json.loads(v.decode("utf-8")),
         auto_offset_reset="latest",
