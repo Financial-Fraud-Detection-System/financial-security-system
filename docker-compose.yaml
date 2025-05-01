@@ -18,7 +18,8 @@ services:
     volumes:
       - ./src:/src
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     command: python src/main.py
 
   zookeeper:
@@ -44,6 +45,12 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   superset:
     build:
