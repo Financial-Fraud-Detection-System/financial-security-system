@@ -153,12 +153,16 @@ class KafkaClient:
             time.sleep(self.health_interval)
         self._logger.debug("Stopping health check thread")
 
-    def stop(self):
+    def stop(self, timeout: int = 5):
         """
         Stops the Kafka client and its health check thread.
 
         :return: None
         """
         self._stop_event.set()
-        self._health_thread.join()
-        self.producer.close()
+        self._health_thread.join(timeout)
+        if self._health_thread.is_alive():
+            self._logger.warning(
+                "Health check thread did not fully terminate during close"
+            )
+        self.producer.close(timeout=timeout)
