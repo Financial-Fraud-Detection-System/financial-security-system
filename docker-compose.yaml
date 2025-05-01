@@ -22,6 +22,19 @@ services:
         condition: service_healthy
     command: python src/main.py
 
+  fraud-network-detection:
+    build:
+      context: ./src/fraud-network-detection
+    container_name: financial-security-system-fraud-network-detection
+    environment:
+      KAFKA_BROKERS: kafka:29092
+    volumes:
+      - ./src:/src
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: python src/main.py
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0
     container_name: financial-security-system-zookeeper
