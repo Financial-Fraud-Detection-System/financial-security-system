@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "src/libs/shared_kafka"
+		},
+		{
+			"path": "src/backend"
+		},
+		{
+			"path": "src/superset"
+		},
+		{
+			"path": "src/transaction-anomaly-detection"
+		},
+		{
+			"path": "src/fraud-network-detection"
+		},
+		{
+			"path": "src/credit-risk-scoring"
+		}
+	],
+	"settings": {}
+}
