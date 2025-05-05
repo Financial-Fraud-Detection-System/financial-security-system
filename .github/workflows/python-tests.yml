@@ -1,0 +1,38 @@
+name: Run Python Tests
+
+on:
+  push:
+    paths:
+      - '**.py'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - '**.py'
+  # RUN manually
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Run the sync_venvs script to set up all virtual environments
+          chmod +x ./scripts/sync_venvs.sh
+          ./scripts/sync_venvs.sh
+
+      - name: Run tests
+        run: |
+          # Make the script executable
+          chmod +x ./scripts/run_all_tests.sh
+          # Run tests with specified parameters
+          ./scripts/run_all_tests.sh --tb=short --disable-warnings --maxfail=1
