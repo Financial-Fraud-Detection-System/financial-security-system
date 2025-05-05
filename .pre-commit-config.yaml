@@ -1,5 +1,5 @@
 ci:
-  skip: [run-tests-if-python-changed]
+  skip: [ run-tests-if-python-changed,mypy ]
 default_install_hook_types: [ pre-commit,commit-msg ]
 default_language_version:
   python: python3.13
@@ -45,7 +45,7 @@ repos:
         name: Run tests if Python files changed
         entry: ./scripts/run_all_tests.sh --tb=short --disable-warnings --maxfail=1
         language: system
-        types: [python]
+        types: [ python ]
         pass_filenames: false
 
   - repo: https://github.com/jorisroovers/gitlint
