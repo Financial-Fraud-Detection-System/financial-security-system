@@ -10,14 +10,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     libssl-dev \
     build-essential \
- && rm -rf /var/lib/apt/lists/*
+    dos2unix \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install required Python packages
 RUN pip install --no-cache-dir pillow psycopg2 clickhouse-connect
 
 # Copy init script
 COPY ./superset-init.sh /superset-init.sh
-RUN chmod +x /superset-init.sh
+
+RUN dos2unix /superset-init.sh \
+    && chmod +x /superset-init.sh \
+    && apt-get remove -y dos2unix \
+    && apt-get autoremove -y
 
 # Copy Superset config
 COPY superset_config.py /app/superset_config.py
