@@ -5,6 +5,12 @@
 
 set -e  # Exit on error
 
+# Check if pyenv is installed
+if ! command -v pyenv &> /dev/null; then
+  echo "❌ pyenv is not installed. Please install it first."
+  exit 1
+fi
+
 find . -type f -name "requirements.txt" | while read -r req_file; do
   dir="$(dirname "$req_file")"
   venv_path="$dir/.venv"
@@ -26,8 +32,20 @@ find . -type f -name "requirements.txt" | while read -r req_file; do
   if [[ "$current_hash" != "$old_hash" || ! -d "$venv_path" ]]; then
     echo "🔄 Changes detected or venv missing. Syncing $venv_path..."
 
+    # Check for .pythonversion file
+    python_version_file="$dir/.pythonversion"
+    if [[ -f "$python_version_file" ]]; then
+      python_version=$(cat "$python_version_file" | tr -d '[:space:]')
+      echo "🐍 Using Python version: $python_version"
+      export PYENV_VERSION="$python_version"
+    else
+      echo "🐍 No .pythonversion file found. Using default Python 3 version."
+      export PYENV_VERSION="3"
+    fi
+
     # Create or recreate venv
-    python3 -m venv "$venv_path"
+    echo "🔨 Creating venv"
+    pyenv exec python -m venv "$venv_path"
     "$venv_path/bin/pip" install --upgrade pip
     "$venv_path/bin/pip" install -r "$req_file"
 
