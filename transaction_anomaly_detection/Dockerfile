@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY ./credit-risk-scoring/requirements.txt .
+COPY ./transaction_anomaly_detection/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
@@ -23,7 +23,7 @@ ENV PYTHONPATH="."
 
 # Copy only necessary files
 COPY --from=builder /root/.local /root/.local
-COPY ./credit-risk-scoring ./credit-risk-scoring
+COPY ./transaction_anomaly_detection ./transaction_anomaly_detection
 COPY ./libs ./libs
 
-CMD ["python", "credit-risk-scoring/main.py"]
+CMD ["python", "transaction_anomaly_detection/main.py"]

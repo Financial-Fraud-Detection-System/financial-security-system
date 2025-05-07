@@ -12,45 +12,45 @@ services:
 
   transaction-anomaly-detection:
     build:
-      dockerfile: ./transaction-anomaly-detection/Dockerfile
+      dockerfile: ./transaction_anomaly_detection/Dockerfile
     container_name: financial-security-system-transaction-anomaly-detection
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./transaction-anomaly-detection:/app/transaction-anomaly-detection
+      - ./transaction_anomaly_detection:/app/transaction_anomaly_detection
       - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python transaction-anomaly-detection/main.py
+    command: python transaction_anomaly_detection/main.py
 
   fraud-network-detection:
     build:
-      dockerfile: ./fraud-network-detection/Dockerfile
+      dockerfile: ./fraud_network_detection/Dockerfile
     container_name: financial-security-system-fraud-network-detection
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./fraud-network-detection:/app/fraud-network-detection
+      - ./fraud_network_detection:/app/fraud_network_detection
       - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python fraud-network-detection/main.py
+    command: python fraud_network_detection/main.py
 
   credit-risk-scoring:
     build:
-      dockerfile: ./credit-risk-scoring/Dockerfile
+      dockerfile: ./credit_risk_scoring/Dockerfile
     container_name: financial-security-system-credit-risk-scoring
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./credit-risk-scoring:/app/credit-risk-scoring
+      - ./credit_risk_scoring:/app/credit_risk_scoring
       - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python credit-risk-scoring/main.py
+    command: python credit_risk_scoring/main.py
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0

@@ -13,13 +13,13 @@
 			"path": "superset"
 		},
 		{
-			"path": "transaction-anomaly-detection"
+			"path": "transaction_anomaly_detection"
 		},
 		{
-			"path": "fraud-network-detection"
+			"path": "fraud_network_detection"
 		},
 		{
-			"path": "credit-risk-scoring"
+			"path": "credit_risk_scoring"
 		},
 		{
 			"path": "libs/shared_models"

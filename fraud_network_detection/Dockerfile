@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY ./fraud-network-detection/requirements.txt .
+COPY ./fraud_network_detection/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
@@ -23,7 +23,7 @@ ENV PYTHONPATH="."
 
 # Copy only necessary files
 COPY --from=builder /root/.local /root/.local
-COPY ./fraud-network-detection ./fraud-network-detection
+COPY ./fraud_network_detection ./fraud_network_detection
 COPY ./libs ./libs
 
-CMD ["python", "fraud-network-detection/main.py"]
+CMD ["python", "fraud_network_detection/main.py"]
