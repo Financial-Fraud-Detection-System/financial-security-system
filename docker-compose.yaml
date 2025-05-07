@@ -82,6 +82,18 @@ services:
       retries: 5
       start_period: 15s
 
+  postgres:
+    image: postgres:17
+    container_name: financial-security-system-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: financial_security_system
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   superset:
     build:
       dockerfile: ./superset/Dockerfile
@@ -141,3 +153,4 @@ volumes:
   superset_home:
   neo4j_data:
   clickhouse_data:
+  postgres_data:
