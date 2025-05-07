@@ -1,29 +1,37 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": ".",
+			"name": "Root Workspace 🌐"
 		},
 		{
-			"path": "libs/shared_kafka"
+			"path": "backend",
+			"name": "Backend API 🟢"
 		},
 		{
-			"path": "backend"
+			"path": "superset",
+			"name": "Superset Dashboards 🟢"
 		},
 		{
-			"path": "superset"
+			"path": "credit_risk_scoring",
+			"name": "Credit Risk Scoring 🟢"
 		},
 		{
-			"path": "transaction_anomaly_detection"
+			"path": "fraud_network_detection",
+			"name": "Fraud Network Graph 🟢"
 		},
 		{
-			"path": "fraud_network_detection"
+			"path": "transaction_anomaly_detection",
+			"name": "Txn Anomaly Detection 🟢"
 		},
 		{
-			"path": "credit_risk_scoring"
+			"path": "libs/shared_kafka",
+			"name": "Kafka Lib 🟢"
 		},
 		{
-			"path": "libs/shared_models"
-		}
+			"path": "libs/shared_models",
+			"name": "Model Definitions 🟢"
+		},
 	],
 	"settings": {}
 }
