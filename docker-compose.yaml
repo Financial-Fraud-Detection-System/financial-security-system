@@ -77,10 +77,10 @@ services:
       - zookeeper
     healthcheck:
       test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
+      interval: 15s
+      timeout: 10s
+      retries: 6
+      start_period: 30s
 
   superset:
     build:
