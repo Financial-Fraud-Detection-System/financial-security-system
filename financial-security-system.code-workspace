@@ -33,5 +33,21 @@
 			"name": "Model Definitions 🟢"
 		},
 	],
-	"settings": {}
+	"settings": {
+		"sqltools.connections": [
+			{
+				"server": "http://localhost",
+				"port": 8123,
+				"database": "default",
+				"useJWT": false,
+				"requestTimeout": 30000,
+				"enableTls": false,
+				"previewLimit": 50,
+				"password": "password",
+				"username": "clickhouse",
+				"driver": "ClickHouse",
+				"name": "clickhouse-financial-security-system"
+			}
+		]
+	}
 }
