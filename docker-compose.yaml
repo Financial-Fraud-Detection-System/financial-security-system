@@ -16,6 +16,7 @@ services:
     container_name: financial-security-system-transaction-anomaly-detection
     environment:
       KAFKA_BROKERS: kafka:29092
+      DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/financial_security_system
     volumes:
       - ./transaction_anomaly_detection:/app/transaction_anomaly_detection
       - ./libs:/app/libs
