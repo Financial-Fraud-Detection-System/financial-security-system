@@ -68,7 +68,7 @@ find . -type f -name "requirements.txt" | while read -r req_file; do
 
   # Run pytest
   echo "🔄 Running pytest in $dir..."
-  pytest -v "$@"
+  PYTHONPATH=. pytest -v "$@"
 
   # Deactivate the virtualenv
   deactivate

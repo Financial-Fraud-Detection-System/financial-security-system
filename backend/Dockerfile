@@ -9,19 +9,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY ./backend/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
 # Stage 2: Runtime image
 FROM python:3.13-slim
 
+WORKDIR /app
+
 ENV PATH="/root/.local/bin:$PATH"
+ENV PYTHONPATH="."
 
 # Copy only necessary files
 COPY --from=builder /root/.local /root/.local
-COPY .. /src
+COPY ./backend ./backend
+COPY ./libs ./libs
 
-WORKDIR /src/credit-risk-scoring
-
-CMD ["python", "src/main.py"]
+CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

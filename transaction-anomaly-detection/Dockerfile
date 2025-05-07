@@ -9,19 +9,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY ./transaction-anomaly-detection/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
 # Stage 2: Runtime image
 FROM python:3.13-slim
 
+WORKDIR /app
+
 ENV PATH="/root/.local/bin:$PATH"
+ENV PYTHONPATH="."
 
 # Copy only necessary files
 COPY --from=builder /root/.local /root/.local
-COPY .. /src
+COPY ./transaction-anomaly-detection ./transaction-anomaly-detection
+COPY ./libs ./libs
 
-WORKDIR /src/transaction-anomaly-detection
-
-CMD ["python", "src/main.py"]
+CMD ["python", "transaction-anomaly-detection/main.py"]

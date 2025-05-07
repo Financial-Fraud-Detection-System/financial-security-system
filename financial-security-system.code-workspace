@@ -4,22 +4,25 @@
 			"path": "."
 		},
 		{
-			"path": "src/libs/shared_kafka"
+			"path": "libs/shared_kafka"
 		},
 		{
-			"path": "src/backend"
+			"path": "backend"
 		},
 		{
-			"path": "src/superset"
+			"path": "superset"
 		},
 		{
-			"path": "src/transaction-anomaly-detection"
+			"path": "transaction-anomaly-detection"
 		},
 		{
-			"path": "src/fraud-network-detection"
+			"path": "fraud-network-detection"
 		},
 		{
-			"path": "src/credit-risk-scoring"
+			"path": "credit-risk-scoring"
+		},
+		{
+			"path": "libs/shared_models"
 		}
 	],
 	"settings": {}

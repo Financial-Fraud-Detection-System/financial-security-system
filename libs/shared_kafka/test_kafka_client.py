@@ -17,6 +17,7 @@ def kafka_client():
 
 
 def test_send_message(kafka_client):
+    kafka_client.producer = MagicMock()
     kafka_client.producer.send = MagicMock()
 
     kafka_client.send("test-topic", {"foo": "bar"}, key="test-key")

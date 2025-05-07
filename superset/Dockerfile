@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --no-cache-dir pillow psycopg2 clickhouse-connect
 
 # Copy init script
-COPY ./superset-init.sh /superset-init.sh
+COPY ./superset/superset-init.sh /superset-init.sh
 
 RUN dos2unix /superset-init.sh \
     && chmod +x /superset-init.sh \
@@ -25,7 +25,7 @@ RUN dos2unix /superset-init.sh \
     && apt-get autoremove -y
 
 # Copy Superset config
-COPY superset_config.py /app/superset_config.py
+COPY ./superset/superset_config.py /app/superset_config.py
 ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 # Optional environment variables for admin user and DB URI

@@ -1,52 +1,56 @@
 services:
   backend:
     build:
-      context: ./src/backend
+      dockerfile: ./backend/Dockerfile
     container_name: financial-security-system-backend
     volumes:
-      - ./src:/src
+      - ./backend:/app/backend
+      - ./libs:/app/libs
     ports:
       - "8000:8000"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
 
   transaction-anomaly-detection:
     build:
-      context: ./src/transaction-anomaly-detection
+      dockerfile: ./transaction-anomaly-detection/Dockerfile
     container_name: financial-security-system-transaction-anomaly-detection
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./src:/src
+      - ./transaction-anomaly-detection:/app/transaction-anomaly-detection
+      - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python src/main.py
+    command: python transaction-anomaly-detection/main.py
 
   fraud-network-detection:
     build:
-      context: ./src/fraud-network-detection
+      dockerfile: ./fraud-network-detection/Dockerfile
     container_name: financial-security-system-fraud-network-detection
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./src:/src
+      - ./fraud-network-detection:/app/fraud-network-detection
+      - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python src/main.py
+    command: python fraud-network-detection/main.py
 
   credit-risk-scoring:
     build:
-      context: ./src/credit-risk-scoring
+      dockerfile: ./credit-risk-scoring/Dockerfile
     container_name: financial-security-system-credit-risk-scoring
     environment:
       KAFKA_BROKERS: kafka:29092
     volumes:
-      - ./src:/src
+      - ./credit-risk-scoring:/app/credit-risk-scoring
+      - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
-    command: python src/main.py
+    command: python credit-risk-scoring/main.py
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0
@@ -80,7 +84,7 @@ services:
 
   superset:
     build:
-      context: ./src/superset
+      dockerfile: ./superset/Dockerfile
     container_name: financial-security-system-superset
     ports:
       - "8088:8088"

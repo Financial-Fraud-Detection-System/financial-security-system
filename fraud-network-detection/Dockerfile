@@ -9,19 +9,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY ./fraud-network-detection/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
 # Stage 2: Runtime image
 FROM python:3.13-slim
 
+WORKDIR /app
+
 ENV PATH="/root/.local/bin:$PATH"
+ENV PYTHONPATH="."
 
 # Copy only necessary files
 COPY --from=builder /root/.local /root/.local
-COPY .. ./src
+COPY ./fraud-network-detection ./fraud-network-detection
+COPY ./libs ./libs
 
-WORKDIR ./src/backend
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "fraud-network-detection/main.py"]
