@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "libs/shared_models"
+		},
+		{
+			"path": "libs/shared_postgres"
 		}
 	],
 	"settings": {}
