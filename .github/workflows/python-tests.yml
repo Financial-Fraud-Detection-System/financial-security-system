@@ -18,10 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: setup pyenv
+        uses: gabrielfalcao/pyenv-action@v18
         with:
-          python-version: '3.13'
+          default: 3.13.2
+          versions: 3.13.2, 3.13.2
+          command: pyenv versions
 
       - name: Cache pip
         uses: actions/cache@v3
