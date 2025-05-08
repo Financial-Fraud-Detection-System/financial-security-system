@@ -32,6 +32,10 @@
 			"path": "libs/shared_models",
 			"name": "Model Definitions 🟢"
 		},
+		{
+			"path": "libs/shared_postgres",
+			"name": "Postgres Lib 🟢"
+		},
 	],
 	"settings": {
 		"sqltools.connections": [
@@ -47,6 +51,13 @@
 				"username": "clickhouse",
 				"driver": "ClickHouse",
 				"name": "clickhouse-financial-security-system"
+			},
+			{
+				"previewLimit": 50,
+				"server": "localhost",
+				"driver": "PostgreSQL",
+				"name": "financial_security",
+				"connectString": "postgresql://postgres:password@localhost:5432/financial_security_system"
 			}
 		]
 	}

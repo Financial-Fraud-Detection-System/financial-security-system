@@ -3,11 +3,19 @@ services:
     build:
       dockerfile: ./backend/Dockerfile
     container_name: financial-security-system-backend
+    environment:
+      KAFKA_BROKERS: kafka:29092
+      DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/financial_security_system
     volumes:
       - ./backend:/app/backend
       - ./libs:/app/libs
     ports:
       - "8000:8000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_started
     command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
 
   transaction-anomaly-detection:
@@ -16,12 +24,15 @@ services:
     container_name: financial-security-system-transaction-anomaly-detection
     environment:
       KAFKA_BROKERS: kafka:29092
+      DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/financial_security_system
     volumes:
       - ./transaction_anomaly_detection:/app/transaction_anomaly_detection
       - ./libs:/app/libs
     depends_on:
       kafka:
         condition: service_healthy
+      postgres:
+        condition: service_started
     command: python transaction_anomaly_detection/main.py
 
   fraud-network-detection:
@@ -76,11 +87,24 @@ services:
     depends_on:
       - zookeeper
     healthcheck:
-      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
+      test:
+        ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
       interval: 15s
       timeout: 10s
       retries: 6
       start_period: 30s
+
+  postgres:
+    image: postgres:17
+    container_name: financial-security-system-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: financial_security_system
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   superset:
     build:
@@ -89,7 +113,7 @@ services:
     ports:
       - "8088:8088"
     environment:
-      SUPERSET_SECRET_KEY: 'XeJUnIEM4SxzzxsXIAQk9jaVlQOPyBG0vYchO8iHZIACet/BMiS36E2x'
+      SUPERSET_SECRET_KEY: "XeJUnIEM4SxzzxsXIAQk9jaVlQOPyBG0vYchO8iHZIACet/BMiS36E2x"
       SUPERSET_DATABASE_URI: postgresql+psycopg2://superset:superset@superset-db:5432/superset
       ADMIN_USERNAME: admin
       ADMIN_EMAIL: admin@superset.com
@@ -141,3 +165,4 @@ volumes:
   superset_home:
   neo4j_data:
   clickhouse_data:
+  postgres_data:
