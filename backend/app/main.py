@@ -63,9 +63,16 @@ def queue_transaction_anomaly_detection_job(
 ):
     """
     Queues transaction anomaly detection jobs for background processing.
+
+    Note:
+        The incoming transaction data is not persisted in the database. Instead, it is forwarded
+        to Kafka for processing. This design decision ensures that the database only stores
+        metadata about the job, while the complete transaction details are handled externally.
     """
 
     # Create a new transaction anomaly job
+    # The transaction data is not stored in the database to keep it lightweight. Instead, it is
+    # forwarded to Kafka for processing.
     transaction_anomaly_job = TransactionAnomalyJob()
 
     # Add the job to the session
