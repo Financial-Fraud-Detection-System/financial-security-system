@@ -6,3 +6,9 @@ class JobStatus(str, enum.Enum):
     processing = "processing"
     done = "done"
     failed = "failed"
+
+
+class CreditRiskType(str, enum.Enum):
+    good = "good"
+    standard = "standard"
+    poor = "poor"
