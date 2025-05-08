@@ -34,15 +34,6 @@ jobs:
           versions: 3.13.1, 3.12.8
           command: pip install -U pip
 
-      - name: Cache virtual environments
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements.txt', '**/.pythonversion') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-
-
       - name: Install dependencies
         run: |
           # Make the script executable
