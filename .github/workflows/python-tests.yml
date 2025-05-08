@@ -21,8 +21,8 @@ jobs:
       - name: setup pyenv
         uses: gabrielfalcao/pyenv-action@v18
         with:
-          default: 3.13
-          versions: 3.13, 3.12
+          default: 3.13.1
+          versions: 3.13.1, 3.12.8
           command: pyenv versions
 
       - name: Cache pip
