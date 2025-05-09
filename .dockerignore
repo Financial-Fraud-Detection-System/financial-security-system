@@ -1,33 +1,33 @@
 # Ignore Python cache files
-__pycache__/
-*.pyc
-*.pyo
+**/__pycache__/
+**/*.pyc
+**/*.pyo
 
 # Ignore virtual environment directories
-.venv/
-.env/
+**/.venv/
+**/.env/
 
 # Ignore Docker-related files
-Dockerfile
-.dockerignore
+**/Dockerfile
+**/.dockerignore
 
 # Ignore logs
-*.log
+**/*.log
 
 # Ignore temporary files
-*.tmp
-*.swp
-*.swo
+**/*.tmp
+**/*.swp
+**/*.swo
 
 # Ignore data files
-data/
-*.csv
+**/data/
+**/*.csv
 
 # Ignore build artifacts
-build/
-dist/
-*.egg-info/
+**/build/
+**/dist/
+**/*.egg-info/
 
 # Ignore IDE/editor specific files
-.vscode/
-.idea/
+**/.vscode/
+**/.idea/
