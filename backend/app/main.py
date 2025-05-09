@@ -130,7 +130,7 @@ def queue_credit_score_prediction_job(
     # Create a Kafka job object
     kafka_job = KafkaCreditRiskJob(
         id=credit_risk_job.id,
-        laon=request.loan,
+        loan=request.loan,
     )
 
     # Send the job to Kafka
@@ -141,9 +141,9 @@ def queue_credit_score_prediction_job(
     )
 
     return CreditRiskResult(
-        job_id=credit_risk_job.id,
-        job_status=credit_risk_job.status,
-        is_anomaly=credit_risk_job.is_anomaly,
+        id=credit_risk_job.id,
+        status=credit_risk_job.status,
+        risk_type=credit_risk_job.risk_type,
         created_at=credit_risk_job.created_at,
     )
 

@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # Consuming messages
     try:
         kafka_client.consume(
-            Config.KAFKA_TRANSACTION_ANOMALY_JOB_TOPIC,
+            Config.KAFKA_CREDIT_RISK_JOB_TOPIC,
             group_id=Config.KAFKA_GROUP_ID,
             on_message=credit_risk_job_handler,
         )

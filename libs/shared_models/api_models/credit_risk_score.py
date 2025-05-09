@@ -22,7 +22,9 @@ class CreditRiskResult(BaseModel):
 
     id: UUID = Field(description="Unique identifier for the job")
     status: JobStatus = Field(description="Status of the job")
-    risk_type: CreditRiskType = Field(description="Type of credit risk evaluated")
+    risk_type: CreditRiskType | None = Field(
+        description="Indicates type of credit risk evaluated or not"
+    )
     created_at: datetime = Field(
         description="Timestamp when the job was created", example="2023-10-01T12:00:00Z"
     )

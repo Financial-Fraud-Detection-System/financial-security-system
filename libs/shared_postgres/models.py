@@ -23,5 +23,5 @@ class CreditRiskJob(Base):  # type: ignore
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     status = Column(Enum(JobStatus), nullable=False, default=JobStatus.queued)
-    risk_type = Column(Enum(CreditRiskType), nullable=False)
+    risk_type = Column(Enum(CreditRiskType), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
