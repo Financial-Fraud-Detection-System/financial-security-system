@@ -9,6 +9,6 @@ class JobStatus(str, enum.Enum):
 
 
 class CreditRiskType(str, enum.Enum):
-    good = "good"
-    standard = "standard"
-    poor = "poor"
+    good = "Good"
+    standard = "Standard"
+    poor = "Poor"

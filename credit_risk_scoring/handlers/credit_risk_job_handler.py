@@ -5,6 +5,7 @@ from config import Config
 from models.predict_score import predict_credit_score_combined
 
 from libs.shared_models.kafka_models.jobs import CreditRiskJob as KafkaJob
+from libs.shared_models.loan import Loan
 from libs.shared_postgres.db import get_session_maker
 from libs.shared_postgres.enums import JobStatus
 from libs.shared_postgres.models import CreditRiskJob as Job
@@ -27,7 +28,12 @@ def credit_risk_job_handler(_: str, message: dict) -> None:
         mark_job_as_processing(kafka_job.id)
 
         # Step 2: Run model
-        result = predict_credit_score_combined(loan_dict)
+
+        # Convert the loan object to a dictionary
+        loan_model = Loan(**loan_dict)
+        loan_transformed_data = loan_model.model_dump(by_alias=True)
+
+        result = predict_credit_score_combined(loan_transformed_data)
 
         # Step 3: Save results
         mark_job_as_done(kafka_job.id, result.get("Credit_Score"))

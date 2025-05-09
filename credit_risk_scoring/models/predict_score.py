@@ -134,14 +134,14 @@ def convert_predict_score_to_label(credit_score):
 
 
 def get_score_from_label(label):
-    if label == "good":
+    if label == "Good":
         return 2
-    elif label == "standard":
+    elif label == "Standard":
         return 1
-    elif label == "poor":
+    elif label == "Poor":
         return 0
     else:
-        raise ValueError("Invalid label. Expected 'good', 'standard', or 'poor'.")
+        raise ValueError("Invalid label. Expected 'Good', 'Standard', or 'Poor'.")
 
 
 def predict_credit_score_combined(data):
@@ -159,11 +159,11 @@ def predict_credit_score_combined(data):
     mean_score = int((score1 + score2) / 2)
 
     if mean_score == 2:
-        final_pred = "good"
+        final_pred = "Good"
     elif mean_score == 1:
-        final_pred = "standard"
+        final_pred = "Standard"
     elif mean_score == 0:
-        final_pred = "poor"
+        final_pred = "Poor"
     else:
         raise ValueError("Invalid mean score. Expected 0, 1, or 2.")
 
