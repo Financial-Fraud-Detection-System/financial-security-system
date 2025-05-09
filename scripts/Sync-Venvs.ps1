@@ -51,7 +51,7 @@ Get-ChildItem -Path . -Recurse -Filter "requirements.txt" | ForEach-Object {
         }
 
         # Upgrade pip and install requirements
-        & "$venvPath\Scripts\pip.exe" install --upgrade pip
+        & "$venvPath\Scripts\python.exe" -m pip install --upgrade pip
         & "$venvPath\Scripts\pip.exe" install -r $reqFile
 
         # Save new hash
