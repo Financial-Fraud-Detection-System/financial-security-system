@@ -63,12 +63,12 @@ def mark_job_as_processing(job_id: UUID) -> Job:
         return job
 
 
-def mark_job_as_done(job_id: UUID, is_anomaly: bool) -> Job:
+def mark_job_as_done(job_id: UUID, risk_type: str) -> Job:
     """
     Mark the job as done in the database.
     Args:
         job_id (str): The ID of the job to mark as done.
-        is_anomaly (bool): Whether the transaction is an anomaly or not.
+        risk_type (str): The type of risk associated with the job.
     Returns:
         Job: The updated job object.
     Raises:
@@ -79,7 +79,7 @@ def mark_job_as_done(job_id: UUID, is_anomaly: bool) -> Job:
         if not job:
             raise ValueError("Job id not found")
         job.status = JobStatus.done
-        job.is_anomaly = is_anomaly
+        job.risk_type = risk_type
         db.commit()
         return job
 
