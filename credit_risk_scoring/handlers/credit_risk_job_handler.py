@@ -79,7 +79,10 @@ def mark_job_as_done(job_id: UUID, risk_type: str) -> Job:
         if not job:
             raise ValueError("Job id not found")
         job.status = JobStatus.done
-        job.risk_type = risk_type
+        try:
+            job.risk_type = CreditRiskType[risk_type]
+        except KeyError:
+            raise ValueError(f"Invalid risk type: {risk_type}")
         db.commit()
         return job
 
