@@ -7,7 +7,7 @@ from models.predict_score import predict_credit_score_combined
 from libs.shared_models.kafka_models.jobs import CreditRiskJob as KafkaJob
 from libs.shared_models.loan import Loan
 from libs.shared_postgres.db import get_session_maker
-from libs.shared_postgres.enums import JobStatus
+from libs.shared_postgres.enums import CreditRiskType, JobStatus
 from libs.shared_postgres.models import CreditRiskJob as Job
 
 session_maker = get_session_maker(Config.DATABASE_URL)
