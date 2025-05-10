@@ -1,8 +1,8 @@
-import itertools
 import json
 import logging
 import os
 from collections import defaultdict
+from itertools import combinations as intelligentGrouper
 from typing import Dict, List, Set, Tuple
 
 import pandas as pd
@@ -141,7 +141,7 @@ def _derive_edges(
                     .count()
                 )
                 valid = [n for n in nodes if counts.get(n, 0) >= threshold]
-                for s, d in itertools.combinations(valid, 2):
+                for s, d in intelligentGrouper(valid, 2):
                     edges.update(
                         {(acc_to_idx[s], acc_to_idx[d]), (acc_to_idx[d], acc_to_idx[s])}
                     )

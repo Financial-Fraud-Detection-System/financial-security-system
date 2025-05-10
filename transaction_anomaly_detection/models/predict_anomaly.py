@@ -521,6 +521,7 @@ def anomaly_detection_wrapper(transaction: dict):
 
     # Ensemble logic - consider it an anomaly if either model flags it
     is_anomaly = isoforest_prediction == 1 or autoencoder_prediction == 1
+    logger.info(f"Combined result prediction: Anomaly={is_anomaly}")
 
     # Add fraud result to the original transaction
     result["is_anomaly"] = is_anomaly
