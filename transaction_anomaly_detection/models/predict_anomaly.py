@@ -125,7 +125,7 @@ class Autoencoder(Model):
 
             # Hardcoded values from your training
             default_values = {
-                "input_dim": 22,
+                "input_dim": 19,
                 "encoding_dim": 14,
                 "hidden_dim_1": 21,
                 "hidden_dim_2": 28,
@@ -251,7 +251,7 @@ def run_prediction(transaction_data: dict):
             else np.array(processed_data).reshape(1, -1)
         )
         scores = model.decision_function(predict_input)
-        threshold = -0.1
+        threshold = 0
         prediction = 1 if scores[0] < threshold else 0
         is_anomaly = prediction == 1
         logger.info(
@@ -482,7 +482,7 @@ def calculate_reconstruction_error(input_data, reconstructions):
 
 
 def evaluate_autoencoder_prediction(reconstruction_error):
-    autoencoder_threshold = 99.5
+    autoencoder_threshold = 0.5
     is_anomaly = reconstruction_error > autoencoder_threshold
     prediction = 1 if is_anomaly else 0
     logger.info(
