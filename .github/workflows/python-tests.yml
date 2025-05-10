@@ -31,7 +31,7 @@ jobs:
         uses: gabrielfalcao/pyenv-action@v18
         with:
           default: 3.13.1
-          versions: 3.12.8
+          versions: 3.12.8, 3.10.0
           command: pip install -U pip
 
       - name: Install dependencies
