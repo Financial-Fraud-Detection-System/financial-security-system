@@ -22,3 +22,12 @@ class CreditRiskJob(BaseModel):
 
     id: UUID
     loan: Loan
+
+
+class FraudNetworkJob(BaseModel):
+    """
+    Fraud network model.
+    """
+
+    id: UUID
+    transactions: list[Transaction]

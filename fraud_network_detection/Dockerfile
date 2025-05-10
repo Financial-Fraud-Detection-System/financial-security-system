@@ -1,5 +1,5 @@
 # Stage 1: Build environment
-FROM python:3.13-slim as builder
+FROM python:3.10-slim as builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 
 # Stage 2: Runtime image
-FROM python:3.13-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
