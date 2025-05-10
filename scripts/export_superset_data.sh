@@ -7,7 +7,7 @@ set -e  # Exit on error
 # Variables
 CONTAINER_NAME=financial-security-system-superset
 EXPORT_PATH_IN_CONTAINER=/tmp/superset_exports
-EXPORT_PATH_ON_HOST=src/superset/exports
+EXPORT_PATH_ON_HOST=superset/exports
 
 echo "🧹 Pre clean-up temporary files in container..."
 docker exec "$CONTAINER_NAME" bash -c "
