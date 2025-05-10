@@ -3,6 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from ..loan import Loan
+from ..online_transaction import OnlineTransaction
 from ..transaction import Transaction
 
 
@@ -30,4 +31,4 @@ class FraudNetworkJob(BaseModel):
     """
 
     id: UUID
-    transactions: list[Transaction]
+    transactions: list[OnlineTransaction]

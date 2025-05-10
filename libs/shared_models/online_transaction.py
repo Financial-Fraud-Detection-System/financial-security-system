@@ -16,7 +16,7 @@ class OnlineTransaction(BaseModel):
     unix_time: PositiveInt = Field(
         ..., description="Unix timestamp (seconds since 1970-01-01 UTC)"
     )
-    ip_address: IPvAnyAddress = Field(..., description="Originating IP address")
+    ip_address: str = Field(..., description="Originating IP address")
 
     class Config:
         anystr_strip_whitespace = True

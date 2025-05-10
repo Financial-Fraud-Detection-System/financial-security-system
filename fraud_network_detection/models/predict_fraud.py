@@ -194,8 +194,8 @@ def _filter_novel_rings(
     novel: list[Tuple[int, list[str]]] = []
     for ring_id, accounts in predicted.items():
         ordered = sorted(accounts)
-        if ordered not in existing_sets:
-            novel.append((ring_id, list(ordered)))
+        if tuple(ordered) not in existing_sets:
+            novel.append((ring_id, ordered))
     return novel
 
 
@@ -245,7 +245,12 @@ def process_and_predict(transactions: List[Dict]) -> List[Tuple[int, List[str]]]
 
     # Build full edge set
     edges = _derive_edges(data_df, acc_to_idx, existing_edges)
-    data = Data(x=x, edge_index=torch.tensor(list(edges), dtype=torch.long).T)
+    if edges:
+        edge_index = torch.tensor(list(edges), dtype=torch.long).t().contiguous()
+    else:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+
+    data = Data(x=x, edge_index=edge_index)
 
     # Inference
     model = _load_model(in_channels=x.size(1))
