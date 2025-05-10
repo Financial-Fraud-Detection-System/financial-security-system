@@ -7,15 +7,11 @@ import xgboost as xgb
 from pgmpy.inference import VariableElimination
 
 
-def predict_credit_score_xgb(input_data):
+def load_xgb_classifier_model():
     """
-    Load the trained XGBoost model and label encoders to predict the credit score for new data.
-
-    Args:
-        input_data (dict): Dictionary containing feature values for prediction
-
+    Load the trained XGBoost classifier model.
     Returns:
-        dict: Input data with the predicted credit score added
+        xgb.XGBClassifier: Loaded XGBoost classifier model
     """
     # Define paths
     model_path = os.path.join(os.path.dirname(__file__), "artifacts", "xgb_model.json")
@@ -24,11 +20,87 @@ def predict_credit_score_xgb(input_data):
     model = xgb.XGBClassifier()
     model.load_model(model_path)
 
+    return model
+
+
+def load_credit_score_encoder():
+    """
+    Load the label encoder for Credit_Score.
+
+    Returns:
+        LabelEncoder: Loaded label encoder
+    """
+    # Define path
+    credit_score_encoder_path = os.path.join(
+        os.path.dirname(__file__), "artifacts", "Credit_Score_label_encoder.pkl"
+    )
+
+    # Load the Credit_Score label encoder
+    with open(credit_score_encoder_path, "rb") as f:
+        credit_score_encoder = pickle.load(f)
+
+    return credit_score_encoder
+
+
+def load_bayesian_model():
+    """
+    Load the trained Bayesian Network model.
+
+    Returns:
+        BayesianModel: Loaded Bayesian Network model
+    """
+    # Define path
+    model_path = os.path.join(os.path.dirname(__file__), "artifacts", "bayes_model.pkl")
+
+    # Load the trained model
+    with open(model_path, "rb") as f:
+        bayesian_model = pickle.load(f)
+
+    return bayesian_model
+
+
+def load_discretizers():
+    """
+    Load the discretizers for Age and Annual_Income.
+
+    Returns:
+        tuple: Tuple containing the loaded discretizers
+    """
+    # Define paths
+    age_discretizer_path = os.path.join(
+        os.path.dirname(__file__), "artifacts", "age_discretizer.pkl"
+    )
+    income_discretizer_path = os.path.join(
+        os.path.dirname(__file__), "artifacts", "income_discretizer.pkl"
+    )
+
+    # Load the discretizers
+    with open(age_discretizer_path, "rb") as f:
+        age_disc = pickle.load(f)
+
+    with open(income_discretizer_path, "rb") as f:
+        income_disc = pickle.load(f)
+
+    return age_disc, income_disc
+
+
+def predict_credit_score_xgb(input_data, xgb_classifier_model, credit_score_encoder):
+    """
+    Load the trained XGBoost model and label encoders to predict the credit score for new data.
+
+    Args:
+        input_data (dict): Dictionary containing feature values for prediction
+        xgb_classifier_model (xgb.XGBClassifier): Trained XGBoost model
+        credit_score_encoder (LabelEncoder): Trained label encoder for Credit_Score
+
+    Returns:
+        dict: Input data with the predicted credit score added
+    """
     # Convert input data to DataFrame
     input_df = pd.DataFrame([input_data])
 
     # Make prediction
-    prediction_encoded = model.predict(input_df)[0]
+    prediction_encoded = xgb_classifier_model.predict(input_df)[0]
 
     # Convert NumPy type to standard Python type
     if isinstance(prediction_encoded, np.integer):
@@ -37,7 +109,9 @@ def predict_credit_score_xgb(input_data):
         raise ValueError("Prediction is not an integer type.")
 
     # Convert prediction to original label
-    prediction_label = convert_predict_score_to_label(prediction_encoded)
+    prediction_label = convert_predict_score_to_label(
+        prediction_encoded, credit_score_encoder
+    )
 
     credit_score = get_score_from_label(prediction_label)
 
@@ -47,37 +121,24 @@ def predict_credit_score_xgb(input_data):
     return result
 
 
-def predict_credit_score_bayesian(input_data):
+def predict_credit_score_bayesian(
+    input_data, bayesian_model, age_disc, income_disc, credit_score_encoder
+):
     """
     Load the trained Bayesian Network model and discretizers to predict the credit score for new data.
 
     Args:
         input_data (dict): Dictionary containing feature values for prediction
+        bayesian_model (BayesianModel): Trained Bayesian Network model
+        age_disc (KBinsDiscretizer): Discretizer for Age
+        income_disc (KBinsDiscretizer): Discretizer for Annual_Income
+        credit_score_encoder (LabelEncoder): Trained label encoder for Credit_Score
 
     Returns:
         dict: Input data with the predicted credit score added
     """
-    # Define paths
-    model_path = os.path.join(os.path.dirname(__file__), "artifacts", "bayes_model.pkl")
-    age_discretizer_path = os.path.join(
-        os.path.dirname(__file__), "artifacts", "age_discretizer.pkl"
-    )
-    income_discretizer_path = os.path.join(
-        os.path.dirname(__file__), "artifacts", "income_discretizer.pkl"
-    )
-
-    # Load the trained model and discretizers
-    with open(model_path, "rb") as f:
-        model = pickle.load(f)
-
-    with open(age_discretizer_path, "rb") as f:
-        age_disc = pickle.load(f)
-
-    with open(income_discretizer_path, "rb") as f:
-        income_disc = pickle.load(f)
-
     # Create inference engine
-    infer = VariableElimination(model)
+    infer = VariableElimination(bayesian_model)
 
     # Process input data for Bayesian model
     processed_input = input_data.copy()
@@ -95,7 +156,7 @@ def predict_credit_score_bayesian(input_data):
         processed_input["Annual_Income"] = int(income_disc.transform(inc_val)[0][0])
 
     # Filter evidence to match the model's nodes
-    valid_nodes = set(model.nodes())
+    valid_nodes = set(bayesian_model.nodes())
     filtered_input = {k: v for k, v in processed_input.items() if k in valid_nodes}
 
     # Perform inference
@@ -106,7 +167,7 @@ def predict_credit_score_bayesian(input_data):
     prediction = int(np.argmax(probabilities))
 
     # Convert prediction to original label
-    prediction_label = convert_predict_score_to_label(prediction)
+    prediction_label = convert_predict_score_to_label(prediction, credit_score_encoder)
 
     credit_score = get_score_from_label(prediction_label)
 
@@ -117,16 +178,7 @@ def predict_credit_score_bayesian(input_data):
     return result_dict
 
 
-def convert_predict_score_to_label(credit_score):
-
-    credit_score_encoder_path = os.path.join(
-        os.path.dirname(__file__), "artifacts", "Credit_Score_label_encoder.pkl"
-    )
-
-    # Load the Credit_Score label encoder
-    with open(credit_score_encoder_path, "rb") as f:
-        credit_score_encoder = pickle.load(f)
-
+def convert_predict_score_to_label(credit_score, credit_score_encoder):
     # # Convert prediction back to original label
     prediction_decoded = credit_score_encoder.inverse_transform([credit_score])[0]
 
@@ -145,11 +197,19 @@ def get_score_from_label(label):
 
 
 def predict_credit_score_combined(data):
+    # Load models and encoders
+    xgb_classifier_model = load_xgb_classifier_model()
+    credit_score_encoder = load_credit_score_encoder()
+    bayesian_model = load_bayesian_model()
+    age_disc, income_disc = load_discretizers()
+
     # Call the first prediction model
-    result1 = predict_credit_score_xgb(data)
+    result1 = predict_credit_score_xgb(data, xgb_classifier_model, credit_score_encoder)
 
     # Call the Bayesian prediction model
-    result2 = predict_credit_score_bayesian(data)
+    result2 = predict_credit_score_bayesian(
+        data, bayesian_model, age_disc, income_disc, credit_score_encoder
+    )
 
     # Extract credit scores from both results
     score1 = result1["Credit_Score"]
