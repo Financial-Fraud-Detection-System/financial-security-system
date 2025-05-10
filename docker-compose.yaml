@@ -1,6 +1,7 @@
 services:
     backend:
         build:
+            context: .
             dockerfile: ./backend/Dockerfile
         container_name: financial-security-system-backend
         environment:
@@ -20,6 +21,7 @@ services:
 
     transaction-anomaly-detection:
         build:
+            context: .
             dockerfile: ./transaction_anomaly_detection/Dockerfile
         container_name: financial-security-system-transaction-anomaly-detection
         environment:
@@ -37,6 +39,7 @@ services:
 
     fraud-network-detection:
         build:
+            context: .
             dockerfile: ./fraud_network_detection/Dockerfile
         container_name: financial-security-system-fraud-network-detection
         environment:
@@ -51,6 +54,7 @@ services:
 
     credit-risk-scoring:
         build:
+            context: .
             dockerfile: ./credit_risk_scoring/Dockerfile
         container_name: financial-security-system-credit-risk-scoring
         environment:
@@ -112,6 +116,7 @@ services:
 
     superset:
         build:
+            context: .
             dockerfile: ./superset/Dockerfile
         container_name: financial-security-system-superset
         ports:
