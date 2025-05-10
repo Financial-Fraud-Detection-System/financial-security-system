@@ -9,3 +9,4 @@ numpy==1.24.4
 pgmpy==0.1.21
 torch>=1.8.0
 networkx>=2.5
+pytest==8.3.5
