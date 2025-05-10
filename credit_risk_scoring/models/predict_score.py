@@ -1,3 +1,4 @@
+import logging
 import os
 import pickle
 
@@ -6,6 +7,10 @@ import pandas as pd
 import xgboost as xgb
 from pgmpy.inference import VariableElimination
 
+# Configure logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def load_xgb_classifier_model():
     """
@@ -13,13 +18,10 @@ def load_xgb_classifier_model():
     Returns:
         xgb.XGBClassifier: Loaded XGBoost classifier model
     """
-    # Define paths
     model_path = os.path.join(os.path.dirname(__file__), "artifacts", "xgb_model.json")
-
-    # Load the trained model
     model = xgb.XGBClassifier()
     model.load_model(model_path)
-
+    logger.info("XGBoost model loaded successfully from %s", model_path)
     return model
 
 
@@ -30,15 +32,12 @@ def load_credit_score_encoder():
     Returns:
         LabelEncoder: Loaded label encoder
     """
-    # Define path
     credit_score_encoder_path = os.path.join(
         os.path.dirname(__file__), "artifacts", "Credit_Score_label_encoder.pkl"
     )
-
-    # Load the Credit_Score label encoder
     with open(credit_score_encoder_path, "rb") as f:
         credit_score_encoder = pickle.load(f)
-
+    logger.info("Credit score label encoder loaded from %s", credit_score_encoder_path)
     return credit_score_encoder
 
 
@@ -49,13 +48,10 @@ def load_bayesian_model():
     Returns:
         BayesianModel: Loaded Bayesian Network model
     """
-    # Define path
     model_path = os.path.join(os.path.dirname(__file__), "artifacts", "bayes_model.pkl")
-
-    # Load the trained model
     with open(model_path, "rb") as f:
         bayesian_model = pickle.load(f)
-
+    logger.info("Bayesian model loaded successfully from %s", model_path)
     return bayesian_model
 
 
@@ -66,21 +62,21 @@ def load_discretizers():
     Returns:
         tuple: Tuple containing the loaded discretizers
     """
-    # Define paths
-    age_discretizer_path = os.path.join(
+    age_path = os.path.join(
         os.path.dirname(__file__), "artifacts", "age_discretizer.pkl"
     )
-    income_discretizer_path = os.path.join(
+    income_path = os.path.join(
         os.path.dirname(__file__), "artifacts", "income_discretizer.pkl"
     )
 
-    # Load the discretizers
-    with open(age_discretizer_path, "rb") as f:
+    with open(age_path, "rb") as f:
         age_disc = pickle.load(f)
-
-    with open(income_discretizer_path, "rb") as f:
+    with open(income_path, "rb") as f:
         income_disc = pickle.load(f)
 
+    logger.info(
+        "Discretizers loaded: Age from %s, Income from %s", age_path, income_path
+    )
     return age_disc, income_disc
 
 
@@ -96,26 +92,29 @@ def predict_credit_score_xgb(input_data, xgb_classifier_model, credit_score_enco
     Returns:
         dict: Input data with the predicted credit score added
     """
-    # Convert input data to DataFrame
+    logger.info("Running XGBoost prediction for input: %s", input_data)
     input_df = pd.DataFrame([input_data])
 
-    # Make prediction
     prediction_encoded = xgb_classifier_model.predict(input_df)[0]
 
-    # Convert NumPy type to standard Python type
     if isinstance(prediction_encoded, np.integer):
         prediction_encoded = int(prediction_encoded)
     else:
+        logger.error("XGBoost prediction not an integer: %s", prediction_encoded)
         raise ValueError("Prediction is not an integer type.")
 
-    # Convert prediction to original label
     prediction_label = convert_predict_score_to_label(
         prediction_encoded, credit_score_encoder
     )
 
     credit_score = get_score_from_label(prediction_label)
+    logger.info(
+        "XGBoost predicted score: %s (label: %s) for input: %s",
+        credit_score,
+        prediction_label,
+        input_data,
+    )
 
-    # Add prediction to the input data
     result = input_data.copy()
     result["Credit_Score"] = credit_score
     return result
@@ -137,52 +136,45 @@ def predict_credit_score_bayesian(
     Returns:
         dict: Input data with the predicted credit score added
     """
-    # Create inference engine
+    logger.info("Running Bayesian prediction for input: %s", input_data)
     infer = VariableElimination(bayesian_model)
-
-    # Process input data for Bayesian model
     processed_input = input_data.copy()
 
-    # Discretize Age
     if "Age" in processed_input:
         age_val = pd.DataFrame([[processed_input["Age"]]], columns=["Age"])
         processed_input["Age"] = int(age_disc.transform(age_val)[0][0])
 
-    # Discretize Annual_Income
     if "Annual_Income" in processed_input:
         inc_val = pd.DataFrame(
             [[processed_input["Annual_Income"]]], columns=["Annual_Income"]
         )
         processed_input["Annual_Income"] = int(income_disc.transform(inc_val)[0][0])
 
-    # Filter evidence to match the model's nodes
     valid_nodes = set(bayesian_model.nodes())
     filtered_input = {k: v for k, v in processed_input.items() if k in valid_nodes}
 
-    # Perform inference
     result = infer.query(variables=["Credit_Score"], evidence=filtered_input)
-
-    # Get the highest probability class (0, 1, or 2)
     probabilities = [result.values[i] for i in range(3)]
     prediction = int(np.argmax(probabilities))
 
-    # Convert prediction to original label
     prediction_label = convert_predict_score_to_label(prediction, credit_score_encoder)
-
     credit_score = get_score_from_label(prediction_label)
 
-    # Add prediction to the input data
+    logger.info(
+        "Bayesian predicted score: %s (label: %s, probs: %s) for input: %s",
+        credit_score,
+        prediction_label,
+        probabilities,
+        input_data,
+    )
+
     result_dict = input_data.copy()
     result_dict["Credit_Score_Bayesian"] = credit_score
-
     return result_dict
 
 
 def convert_predict_score_to_label(credit_score, credit_score_encoder):
-    # # Convert prediction back to original label
-    prediction_decoded = credit_score_encoder.inverse_transform([credit_score])[0]
-
-    return prediction_decoded
+    return credit_score_encoder.inverse_transform([credit_score])[0]
 
 
 def get_score_from_label(label):
@@ -193,29 +185,24 @@ def get_score_from_label(label):
     elif label == "Poor":
         return 0
     else:
+        logger.error("Invalid label in get_score_from_label: %s", label)
         raise ValueError("Invalid label. Expected 'Good', 'Standard', or 'Poor'.")
 
 
 def predict_credit_score_combined(data):
-    # Load models and encoders
-    xgb_classifier_model = load_xgb_classifier_model()
-    credit_score_encoder = load_credit_score_encoder()
-    bayesian_model = load_bayesian_model()
+    logger.info("Starting combined credit score prediction")
+    xgb_model = load_xgb_classifier_model()
+    encoder = load_credit_score_encoder()
+    bayes_model = load_bayesian_model()
     age_disc, income_disc = load_discretizers()
 
-    # Call the first prediction model
-    result1 = predict_credit_score_xgb(data, xgb_classifier_model, credit_score_encoder)
-
-    # Call the Bayesian prediction model
+    result1 = predict_credit_score_xgb(data, xgb_model, encoder)
     result2 = predict_credit_score_bayesian(
-        data, bayesian_model, age_disc, income_disc, credit_score_encoder
+        data, bayes_model, age_disc, income_disc, encoder
     )
 
-    # Extract credit scores from both results
     score1 = result1["Credit_Score"]
     score2 = result2["Credit_Score_Bayesian"]
-
-    # Calculate mean and floor down to integer
     mean_score = int((score1 + score2) / 2)
 
     if mean_score == 2:
@@ -225,18 +212,25 @@ def predict_credit_score_combined(data):
     elif mean_score == 0:
         final_pred = "Poor"
     else:
+        logger.error("Invalid mean score computed: %s", mean_score)
         raise ValueError("Invalid mean score. Expected 0, 1, or 2.")
 
-    # Create combined result (copy of input data with added score)
+    logger.info(
+        "Combined credit score: %s (from XGB: %s, Bayesian: %s)",
+        final_pred,
+        score1,
+        score2,
+    )
+
     combined_result = data.copy()
     combined_result["Credit_Score"] = final_pred
-
     return combined_result
 
 
 # Example usage
 if __name__ == "__main__":
-    # Sample input data
+    logging.basicConfig(level=logging.INFO)
+
     new_data = {
         "Age": 50,
         "Occupation": 15,
@@ -257,16 +251,10 @@ if __name__ == "__main__":
         "Student Loan": 0,
     }
 
-    # # Get prediction
-    # result = predict_credit_score_xgb(new_data)
-    # print(f"Predicted Credit Score: {result['Credit_Score']}")
-    # print("Complete Result:")
-    # print(result)
-
-    # bayes_result = predict_credit_score_bayesian(new_data)
-    # print(f"Bayesian Predicted Credit Score: {bayes_result['Credit_Score_Bayesian']}")
-
-    combined_result = predict_credit_score_combined(new_data)
-    print(f"Combined Predicted Credit Score: {combined_result['Credit_Score']}")
-    print("Combined Result:")
-    print(combined_result)
+    try:
+        combined_result = predict_credit_score_combined(new_data)
+        print(f"Combined Predicted Credit Score: {combined_result['Credit_Score']}")
+        print("Combined Result:")
+        print(combined_result)
+    except Exception as e:
+        print("Prediction failed: %s", str(e))
