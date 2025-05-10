@@ -3,8 +3,10 @@ This module defines a FastAPI application for the backend of the Financial Secur
 Running as a script will start a development uvicorn server serving the app.
 """
 
+from uuid import UUID
+
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
 from libs.shared_kafka.kafka_client import KafkaClient
@@ -145,6 +147,23 @@ def queue_credit_score_prediction_job(
         status=credit_risk_job.status,
         risk_type=credit_risk_job.risk_type,
         created_at=credit_risk_job.created_at,
+    )
+
+
+@app.get("/credit_risk/{job_id}", response_model=CreditRiskResult)
+def get_credit_risk_result(job_id: UUID, db: Session = Depends(get_db)):
+    """
+    Fetch the status and result of a credit risk score prediction job by ID.
+    """
+    job = db.query(CreditRiskJob).filter(CreditRiskJob.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Credit risk job not found.")
+
+    return CreditRiskResult(
+        id=job.id,
+        status=job.status,
+        risk_type=job.risk_type if job.status == "done" else None,
+        created_at=job.created_at,
     )
 
 
