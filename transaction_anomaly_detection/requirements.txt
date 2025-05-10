@@ -7,3 +7,4 @@ numpy==1.26.4
 pandas==2.2.3
 scikit-learn==1.6.1
 tensorflow==2.19.0
+clickhouse-connect==0.8.17

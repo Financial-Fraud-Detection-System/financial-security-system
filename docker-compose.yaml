@@ -27,6 +27,11 @@ services:
         environment:
             KAFKA_BROKERS: kafka:29092
             DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/financial_security_system
+            CLICKHOUSE_HOST: clickhouse
+            CLICKHOUSE_PORT: 8123
+            CLICKHOUSE_USER: clickhouse
+            CLICKHOUSE_PASSWORD: password
+            CLICKHOUSE_DATABASE: default
         volumes:
             - ./transaction_anomaly_detection:/app/transaction_anomaly_detection
             - ./libs:/app/libs

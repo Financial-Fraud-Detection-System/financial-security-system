@@ -107,6 +107,29 @@ def queue_transaction_anomaly_detection_job(
     )
 
 
+@app.get("/transaction_anomaly/{job_id}", response_model=TransactionAnomalyResult)
+def get_transaction_anomaly_result(job_id: UUID, db: Session = Depends(get_db)):
+    """
+    Fetch the status and result of a transaction anomaly detection job by ID.
+    """
+    job = (
+        db.query(TransactionAnomalyJob)
+        .filter(TransactionAnomalyJob.id == job_id)
+        .first()
+    )
+    if not job:
+        raise HTTPException(
+            status_code=404, detail="Transaction anomaly job not found."
+        )
+
+    return TransactionAnomalyResult(
+        job_id=job.id,
+        job_status=job.status,
+        is_anomaly=job.is_anomaly if job.status == "done" else None,
+        created_at=job.created_at,
+    )
+
+
 @app.post("/credit_risk", response_model=CreditRiskResult)
 def queue_credit_score_prediction_job(
     request: CreditRiskRequest, db: Session = Depends(get_db)
