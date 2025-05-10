@@ -1,2 +1,12 @@
 kafka-python==2.1.5
 pydantic==2.11.3
+sqlalchemy==2.0.40
+psycopg2-binary==2.9.10
+pandas==2.2.2
+xgboost==2.1.4
+scikit-learn==1.6.1
+numpy==1.24.4
+pgmpy==0.1.21
+torch>=1.8.0
+networkx>=2.5
+pytest==8.3.5

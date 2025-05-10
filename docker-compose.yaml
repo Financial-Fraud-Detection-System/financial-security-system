@@ -71,6 +71,8 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
+            postgres:
+                condition: service_started
         command: python credit_risk_scoring/main.py
 
     zookeeper:

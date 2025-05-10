@@ -1,9 +1,13 @@
 import logging
 
 from config import Config
-from handlers.dummy_handler import dummy_handler
+from handlers.credit_risk_job_handler import credit_risk_job_handler
 
 from libs.shared_kafka.kafka_client import KafkaClient
+from libs.shared_postgres.db import initialize_database
+from libs.shared_postgres.models import Base
+
+initialize_database(Base, Config.DATABASE_URL)
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -20,9 +24,9 @@ if __name__ == "__main__":
     # Consuming messages
     try:
         kafka_client.consume(
-            Config.KAFKA_DUMMY_TOPIC,
+            Config.KAFKA_CREDIT_RISK_JOB_TOPIC,
             group_id=Config.KAFKA_GROUP_ID,
-            on_message=dummy_handler,
+            on_message=credit_risk_job_handler,
         )
     except KeyboardInterrupt:
         logging.info("Stopping Kafka client...")

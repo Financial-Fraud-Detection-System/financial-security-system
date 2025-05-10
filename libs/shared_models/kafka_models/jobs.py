@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from ..loan import Loan
 from ..transaction import Transaction
 
 
@@ -12,3 +13,12 @@ class TransactionAnomalyJob(BaseModel):
 
     id: UUID
     transaction: Transaction
+
+
+class CreditRiskJob(BaseModel):
+    """
+    Credit risk model.
+    """
+
+    id: UUID
+    loan: Loan
