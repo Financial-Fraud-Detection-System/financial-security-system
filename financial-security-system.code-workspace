@@ -36,6 +36,10 @@
 			"path": "libs/shared_postgres",
 			"name": "Postgres Lib 🟢"
 		},
+		{
+			"path": "libs/shared_clickhouse",
+			"name": "ClickHouse Lib 🟢"
+		}
 	],
 	"settings": {
 		"sqltools.connections": [
