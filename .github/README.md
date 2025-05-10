@@ -7,86 +7,95 @@ A comprehensive financial security system that provides real-time transaction mo
 The system consists of several microservices working together to provide a complete financial security solution:
 
 1. **Backend API Service**
-   - RESTful API service built with FastAPI
-   - Handles core business logic and service orchestration
-   - Runs on port 8000
+
+    - RESTful API service built with FastAPI
+    - Handles core business logic and service orchestration
+    - Runs on port 8000
 
 2. **Transaction Anomaly Detection**
-   - Real-time transaction monitoring and anomaly detection
-   - Uses machine learning to identify suspicious patterns
-   - Integrates with Kafka for event streaming
+
+    - Real-time transaction monitoring and anomaly detection
+    - Uses machine learning to identify suspicious patterns
+    - Integrates with Kafka for event streaming
 
 3. **Fraud Network Detection**
-   - Network analysis for fraud detection
-   - Uses graph database (Neo4j) for relationship analysis
-   - Identifies complex fraud patterns and networks
+
+    - Network analysis for fraud detection
+    - Uses graph database (Neo4j) for relationship analysis
+    - Identifies complex fraud patterns and networks
 
 4. **Credit Risk Scoring**
-   - Credit risk assessment and scoring
-   - Real-time risk evaluation
-   - Historical data analysis
+
+    - Credit risk assessment and scoring
+    - Real-time risk evaluation
+    - Historical data analysis
 
 5. **Data Visualization (Apache Superset)**
-   - Interactive dashboards and visualizations
-   - Real-time monitoring of system metrics
-   - Accessible at port 8088
+    - Interactive dashboards and visualizations
+    - Real-time monitoring of system metrics
+    - Accessible at port 8088
 
 ## Technology Stack
 
-- **Message Broker**: Apache Kafka
-- **Databases**:
-  - PostgreSQL (Main database)
-  - Neo4j (Graph database for fraud network analysis)
-  - ClickHouse (Analytics database)
-- **Data Visualization**: Apache Superset
-- **Container Orchestration**: Docker Compose
-- **API Framework**: FastAPI
-- **Development Tools**:
-  - Black (Code formatting)
-  - Pre-commit hooks
-  - Flake8 (Linting)
+-   **Message Broker**: Apache Kafka
+-   **Databases**:
+    -   PostgreSQL (Main database)
+    -   Neo4j (Graph database for fraud network analysis)
+    -   ClickHouse (Analytics database)
+-   **Data Visualization**: Apache Superset
+-   **Container Orchestration**: Docker Compose
+-   **API Framework**: FastAPI
+-   **Development Tools**:
+    -   Black (Code formatting)
+    -   Pre-commit hooks
+    -   Flake8 (Linting)
 
 ## Prerequisites
 
-- Docker and Docker Compose
-- Python 3.8+
-- Git
+-   Docker and Docker Compose
+-   Pyenv with Python 3.10.x, 3.12.x and 3.13.x
+-   Git
 
 ## Getting Started
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/Financial-Fraud-Detection-System/financial-security-system.git
-   cd financial-security-system
-   ```
+
+    ```bash
+    git clone https://github.com/Financial-Fraud-Detection-System/financial-security-system.git
+    cd financial-security-system
+    ```
 
 2. Start the services:
-   ```bash
-   docker-compose up -d
-   ```
+
+    ```bash
+    docker-compose up -d
+    ```
 
 3. Access the services:
-   - Backend API: http://localhost:8000
-   - Superset Dashboard: http://localhost:8088
-   - Neo4j Browser: http://localhost:7474
+    - Backend API: http://localhost:8000
+    - Superset Dashboard: http://localhost:8088
+    - Neo4j Browser: http://localhost:7474
 
 ## Development Setup
 
-1. Create a virtual environment:
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
+1. Synchronise virtual environment across all directories (from the root directory):
 
-2. Install development dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+    ```bash
+    ./scripts/sync_venv.sh
+    # On Windows: ./scripts/Sync_Venv.ps1
+    ```
 
-3. Install pre-commit hooks:
-   ```bash
-   pre-commit install
-   ```
+2. Install pre-commit hooks (From the root directory activate the virtual environment and run):
+
+    ```bash
+    pre-commit install
+    ```
+
+3. To run tests:
+    ```bash
+    ./scripts/run_all_tests.sh
+    # On Windows: ./scripts/run_all_tests.ps1
+    ```
 
 ## Project Structure
 
