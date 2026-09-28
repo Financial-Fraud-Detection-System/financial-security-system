@@ -27,8 +27,7 @@ def initialize_logs_table(db: ClickHouseDatabase, table_name: str):
     Initialize the given table as a table compatible with logging, in a ClickHouse database if it doesn't exist.
     """
     client = db.get_client()
-    client.command(
-        f"""
+    client.command(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             timestamp DateTime,
             service_name String,
@@ -38,5 +37,4 @@ def initialize_logs_table(db: ClickHouseDatabase, table_name: str):
             extra_fields String
         ) ENGINE = MergeTree()
         ORDER BY (timestamp, service_name)
-        """
-    )
+        """)
